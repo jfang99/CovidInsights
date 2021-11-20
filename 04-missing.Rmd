@@ -5,6 +5,11 @@ library(covidcast)
 library(tidyverse)
 library(patchwork)
 ```
+```{r}
+data <- covidcast_signal("doctor-visits", "smoothed_cli", start_day = "2020-05-01", end_day = "2020-06-07")
+```
+
+The following is the number of missing values in each column:
 
 ```{r,warning=F}
 colSums(is.na(data)) %>%
@@ -27,7 +32,6 @@ ggplot(dp, aes(x = key, y = fct_rev(id), fill = missing)) +
 ```
 
 ```{r}
-data <- covidcast_signal("doctor-visits", "smoothed_cli", start_day = "2020-05-01", end_day = "2020-06-07")
 source("plot_missing.R")
 plot_missing(data, percent = TRUE)
 ```

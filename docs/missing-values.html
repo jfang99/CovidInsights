@@ -100,6 +100,16 @@
             <section class="normal" id="section-">
 <div id="missing-values" class="section level1">
 <h1><span class="header-section-number">Chapter 4</span> Missing values</h1>
+<p>The following is the number of missing values in each column:</p>
+<pre><code>##              stderr         sample_size         data_source              signal 
+##               85828               85828                   0                   0 
+##           geo_value          time_value               issue                 lag 
+##                   0                   0                   0                   0 
+##       missing_value      missing_stderr missing_sample_size               value 
+##                   0                   0                   0                   0</code></pre>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>We found that there are two columns that consist of only missing values, and the other columns don’t have missing values. So there is only one pattern of missing values, as suggested by the plot. Since the two whole columns are missing values, we could just discard these two columns when analyzing.</p>
 
 </div>
             </section>
