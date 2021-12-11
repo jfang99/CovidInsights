@@ -1,1 +1,12 @@
 # Data transformation
+```{r}
+#install.packages("covidcast")
+library(covidcast)
+library(tidyverse)
+library(patchwork)
+```
+```{r}
+data <- covidcast_signal("doctor-visits", "smoothed_cli", start_day = "2020-05-01", end_day = "2020-06-07")
+```
+We first got the data by using the COVIDcast Epidata API. This data is the estimated percentage of COVID-related doctor's vistis, based on the outpatient visits and is the. 
+
