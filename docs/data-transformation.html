@@ -33,7 +33,6 @@
   
 <link rel="prev" href="data-sources.html"/>
 <link rel="next" href="missing-values.html"/>
-<script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -75,7 +74,9 @@
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
 <li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a></li>
-<li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a></li>
+<li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a><ul>
+<li class="chapter" data-level="3.1" data-path="data-transformation.html"><a href="data-transformation.html#hospital-visits-data"><i class="fa fa-check"></i><b>3.1</b> Hospital Visits Data</a></li>
+</ul></li>
 <li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a></li>
 <li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a></li>
 <li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
@@ -99,27 +100,18 @@
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="data-transformation" class="section level1" number="3">
+<div id="data-transformation" class="section level1">
 <h1><span class="header-section-number">Chapter 3</span> Data transformation</h1>
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</p>
-<p>=======</p>
-<p>We first got the data by using the COVIDcast Epidata API. This data is the estimated percentage of COVID-related doctor’s vistis, based on the outpatient visits and is the.</p>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>f62a2bedc5a363332f67fad97337ed62fd224dc4</p>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
+<div id="hospital-visits-data" class="section level2">
+<h2><span class="header-section-number">3.1</span> Hospital Visits Data</h2>
+<p>We first got the data by using the COVIDcast Epidata API. This data is the estimated percentage of COVID-related doctor’s vistis, based on the outpatient visits.
+The estimation works as follows:
+For a fixed time t and location i, there are counts of Covid-like symptoms, Flu-like symptoms, Mixed symptoms, Clealy-Flu symptoms, and total counts of visits. Then estimate the percentage of COVID-like symptoms as:</p>
+<p>100 * (CovidLike + FluLike + Mixed - ClearlyFlu) / total</p>
+<p>To enhance variablility, a local linear regression filter with a Gaussian kernel is applied, the bandwidth is set to 7 to cover a rolling 7-day window.
+However, after smoothing the data, the standard error estimate is claimed to be inaccurate any more, so the standard error appears to be missing the dataset and we just removed the column.</p>
 
+</div>
 </div>
             </section>
 

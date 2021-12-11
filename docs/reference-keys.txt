@@ -1,6 +1,7 @@
 introduction
 data-sources
 data-transformation
+hospital-visits-data
 missing-values
 results
 interactive-component
