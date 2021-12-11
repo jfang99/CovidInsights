@@ -1,11 +1,14 @@
 # Data transformation
+
+## Hospital Visits Data
+
 We first got the data by using the COVIDcast Epidata API. This data is the estimated percentage of COVID-related doctor's vistis, based on the outpatient visits.
 The estimation works as follows:
 For a fixed time t and location i, there are counts of Covid-like symptoms, Flu-like symptoms, Mixed symptoms, Clealy-Flu symptoms, and total counts of visits. Then estimate the percentage of COVID-like symptoms as:
+
 100 * (CovidLike + FluLike + Mixed - ClearlyFlu) / total
 
 To enhance variablility, a local linear regression filter with a Gaussian kernel is applied, the bandwidth is set to 7 to cover a rolling 7-day window.
-
-
+However, after smoothing the data, the standard error estimate is claimed to be inaccurate any more, so the standard error appears to be missing the dataset and we just removed the column. 
 
 
