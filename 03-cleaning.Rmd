@@ -1,1 +1,3 @@
 # Data transformation
+
+Our data need no transformation, because Delphi has written extensive software to obtain data from various sources, aggregate the data, calculate statistical estimates, and format the data to be shared through the COVIDcast API. We can use this API to fetch the data we want directly.
