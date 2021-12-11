@@ -1,3 +1,16 @@
 # Data transformation
+<<<<<<< HEAD
 
-Our data need no transformation, because Delphi has written extensive software to obtain data from various sources, aggregate the data, calculate statistical estimates, and format the data to be shared through the COVIDcast API. We can use this API to fetch the data we want directly.
+=======
+```{r}
+#install.packages("covidcast")
+library(covidcast)
+library(tidyverse)
+library(patchwork)
+```
+```{r}
+data <- covidcast_signal("doctor-visits", "smoothed_cli", start_day = "2020-05-01", end_day = "2020-05-02")
+```
+We first got the data by using the COVIDcast Epidata API. This data is the estimated percentage of COVID-related doctor's vistis, based on the outpatient visits and is the. 
+
+>>>>>>> f62a2bedc5a363332f67fad97337ed62fd224dc4

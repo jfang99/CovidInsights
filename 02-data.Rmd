@@ -7,4 +7,5 @@ This is the documentation for accessing Delphi’s COVID-19 indicators via the c
 Delphi’s COVIDcast Epidata API provides data of covid-19 pandemic across the United States and it's updated daily. The data has a variety sources, for example, fb-survey, google search, jhu and so on, which allows us not only gain insights of covid-19 pandemic from the basic statistcs like case data and death data, but also find some interesting facts from the people's google search behaviors.
 
 More details about the data please refer to:
+
 https://cmu-delphi.github.io/delphi-epidata/api/covidcast_licensing.html
