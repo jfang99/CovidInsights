@@ -1,5 +1,10 @@
 # Data transformation
+Our data need no transformation, because Delphi has written extensive software to obtain data from various sources, aggregate the data, calculate statistical estimates, and format the data to be shared through the COVIDcast API. We can use this API to fetch the data we want directly.
 
 We first got the data by using the COVIDcast Epidata API. This data is the estimated percentage of COVID-related doctor's vistis, based on the outpatient visits.
 The estimation works as follows:
 For a fixed time t and location i, there are counts of Covid-like symptoms, Flu-like symptoms, Mixed symptoms, Clealy-Flu symptoms, and total counts of visits. 
+
+
+We first got the data by using the COVIDcast Epidata API. This data is the estimated percentage of COVID-related doctor's vistis, based on the outpatient visits and is the. 
+
