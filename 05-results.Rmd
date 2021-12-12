@@ -1,4 +1,23 @@
 # Results
-```{r}
+## Doctor Visits vs. Hospital Admissions
+```{r,message=F,warning=F}
+doctor_visit_data_raw <- covidcast_signal("doctor-visits", "smoothed_cli", start_day = "2020-02-01", end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','ak','co','hi','wa','ks','va','mo'))
+doctor_visit_data <- doctor_visit_data_raw[c('geo_value','time_value','value')]
 
+hospital_data_raw <- covidcast_signal("hospital-admissions", "smoothed_covid19_from_claims", start_day = "2020-02-01", end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','ak','co','hi','wa','ks','va','mo'))
+hospital_data <- hospital_data_raw[c('geo_value','time_value','value')]
 ```
+```{r}
+df <- hospital_data %>% inner_join(doctor_visit_data, by=c("geo_value", "time_value"))
+colnames(df) <- c('state','time','hospital_admission','doctor_visit')
+dict = c('Alaska','California','Colorado','Hawaii','Kansas', 'Missouri', 'New York', 'Virginia', 'Washington')
+names(dict) = c('ak','ca','co','hi','ks','mo','ny','va','wa')
+df$state <- dict[df$state]
+ggplot(df)+geom_line(aes(time,hospital_admission,colour='hospital_admissions'))+geom_line(aes(time,doctor_visit,colour='doctor_visits'))+facet_wrap(vars(state)) + scale_colour_manual("", values = c("hospital_admissions"="blue", "doctor_visits"="red"))+theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1,size=6)) + xlab('Time') + ylab('Percentage')
+```
+
+The line plot is comparing the hospital admissions and doctor visits in different states. The y-axis is the percentage of the two, and the x-axis is the time (in terms of day). This is like the sanity check of the two datasets. We can see that the patterns of two lines are similar in all 9 states, and intuitively the percentages of doctor visits and hospital admissions should follow a similar pattern. Therefore, the sanity check passes.  
+
+What's more, we wanted to explore the 
+
+

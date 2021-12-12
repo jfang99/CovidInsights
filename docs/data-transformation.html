@@ -76,9 +76,12 @@
 <li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a></li>
 <li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a><ul>
 <li class="chapter" data-level="3.1" data-path="data-transformation.html"><a href="data-transformation.html#hospital-visits-data"><i class="fa fa-check"></i><b>3.1</b> Hospital Visits Data</a></li>
+<li class="chapter" data-level="3.2" data-path="data-transformation.html"><a href="data-transformation.html#hospital-admissions-data"><i class="fa fa-check"></i><b>3.2</b> Hospital Admissions Data</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a></li>
-<li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a></li>
+<li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a><ul>
+<li class="chapter" data-level="5.1" data-path="results.html"><a href="results.html#doctor-visits-vs.hospital-admissions"><i class="fa fa-check"></i><b>5.1</b> Doctor Visits vs. Hospital Admissions</a></li>
+</ul></li>
 <li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
 <li class="chapter" data-level="7" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>7</b> Conclusion</a></li>
 <li class="divider"></li>
@@ -104,12 +107,21 @@
 <h1><span class="header-section-number">Chapter 3</span> Data transformation</h1>
 <div id="hospital-visits-data" class="section level2">
 <h2><span class="header-section-number">3.1</span> Hospital Visits Data</h2>
-<p>We first got the data by using the COVIDcast Epidata API. This data is the estimated percentage of COVID-related doctor’s vistis, based on the outpatient visits.
+<p>We first got the data by using the COVIDcast Epidata API. This data is the estimated percentage of COVID-related doctor’s vistis, based on the outpatient visits. The outpatient visits data comes from Carnegie Mellon University’s health system partners.
 The estimation works as follows:
 For a fixed time t and location i, there are counts of Covid-like symptoms, Flu-like symptoms, Mixed symptoms, Clealy-Flu symptoms, and total counts of visits. Then estimate the percentage of COVID-like symptoms as:</p>
-<p>100 * (CovidLike + FluLike + Mixed - ClearlyFlu) / total</p>
-<p>To enhance variablility, a local linear regression filter with a Gaussian kernel is applied, the bandwidth is set to 7 to cover a rolling 7-day window.
-However, after smoothing the data, the standard error estimate is claimed to be inaccurate any more, so the standard error appears to be missing the dataset and we just removed the column.</p>
+<p><strong>100 * (CovidLike + FluLike + Mixed - ClearlyFlu) / total</strong></p>
+<p>To enhance variablility, a local linear regression filter with a Gaussian kernel is applied, the bandwidth is set to 7 to cover a rolling 7-day window.</p>
+<p>Note that we only picked nine states for analysis: 2 from west coast (CA, WA), 2 from east coast (NY, VA), 2 from middle (CO, KS, MO), and two relatively remote states (HI, AK). And we analyzed data from 2020-02-01 to 2021-02-01.</p>
+<p>However, after smoothing the data, the standard error estimate is claimed to be inaccurate any more, so the standard error appears to be missing the dataset and we just removed the column.</p>
+<p>Hence, the resulting variables in the dataset are: ‘location’, ‘time’, ‘smoothed estimated percentage of COVID-related doctor’s vistis’.</p>
+</div>
+<div id="hospital-admissions-data" class="section level2">
+<h2><span class="header-section-number">3.2</span> Hospital Admissions Data</h2>
+<p>This data is also retrieved using COVIDcast Epidata API. It is the data of the estimated percentage of new hospital admissions with COVID-related symptoms. The data also comes from Carnegie Mellon University’s health system partners.</p>
+<p>For consistency, we also picked the nine states and the same time interval.
+This data went through the same smoothing adjustment as above. So for the same reason, we removed the columns associated with standard error.</p>
+<p>The resulting variables are: ‘location’, ‘time’, ‘smoothed estimated percentage of new hospital admissions related to COVID’.</p>
 
 </div>
 </div>

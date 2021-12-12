@@ -6,7 +6,7 @@ library(tidyverse)
 library(patchwork)
 ```
 ```{r}
-data <- covidcast_signal("doctor-visits", "smoothed_cli", start_day = "2020-05-01", end_day = "2020-06-07")
+#data <- covidcast_signal("doctor-visits", "smoothed_cli", start_day = "2020-05-01", end_day = "2020-06-07")
 ```
 
 The following is the number of missing values in each column:

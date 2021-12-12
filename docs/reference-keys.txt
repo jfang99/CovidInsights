@@ -2,7 +2,9 @@ introduction
 data-sources
 data-transformation
 hospital-visits-data
+hospital-admissions-data
 missing-values
 results
+doctor-visits-vs.hospital-admissions
 interactive-component
 conclusion
