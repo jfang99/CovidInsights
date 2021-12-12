@@ -12,28 +12,28 @@ library(patchwork)
 The following is the number of missing values in each column:
 
 ```{r,warning=F}
-colSums(is.na(data)) %>%
-  sort(decreasing = TRUE)
-dp <- data[1:30,]
-dp <- dp %>% 
-    rownames_to_column("id") %>% 
-    gather(key, value, -id) %>% 
-    mutate(missing = ifelse(is.na(value), "yes", "no"))
-dp$id <- factor(dp$id, levels = c(1:30))
-ggplot(dp, aes(x = key, y = fct_rev(id), fill = missing)) +
-  geom_tile(color = "white") + 
-  ggtitle("missing value heatmap") +
-  scale_fill_viridis_d() + # discrete scale
-  xlab("variables")+
-  ylab("data(May)")+
-  theme_bw()+
-  theme(text = element_text(size=10),
-        axis.text.x = element_text(angle=50, hjust=1))
+# colSums(is.na(data)) %>%
+#   sort(decreasing = TRUE)
+# dp <- data[1:30,]
+# dp <- dp %>% 
+#     rownames_to_column("id") %>% 
+#     gather(key, value, -id) %>% 
+#     mutate(missing = ifelse(is.na(value), "yes", "no"))
+# dp$id <- factor(dp$id, levels = c(1:30))
+# ggplot(dp, aes(x = key, y = fct_rev(id), fill = missing)) +
+#   geom_tile(color = "white") + 
+#   ggtitle("missing value heatmap") +
+#   scale_fill_viridis_d() + # discrete scale
+#   xlab("variables")+
+#   ylab("data(May)")+
+#   theme_bw()+
+#   theme(text = element_text(size=10),
+#         axis.text.x = element_text(angle=50, hjust=1))
 ```
 
 ```{r}
-source("plot_missing.R")
-plot_missing(data, percent = TRUE)
+# source("plot_missing.R")
+# plot_missing(data, percent = TRUE)
 ```
 
 We found that there are two columns that consist of only missing values, and the other columns don't have missing values. So there is only one pattern of missing values, as suggested by the plot. Since the two whole columns are missing values, we could just discard these two columns when analyzing.

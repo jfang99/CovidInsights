@@ -1,5 +1,12 @@
 # Results
 ## Doctor Visits vs. Hospital Admissions
+```{r}
+#install.packages("covidcast")
+library(covidcast)
+library(tidyverse)
+library(patchwork)
+```
+
 ```{r,warning=F}
 doctor_visit_data_raw <- covidcast_signal("doctor-visits", "smoothed_cli", start_day = "2020-02-01", end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','ak','co','hi','wa','ks','va','mo'))
 doctor_visit_data <- doctor_visit_data_raw[c('geo_value','time_value','value')]
@@ -17,7 +24,53 @@ ggplot(df)+geom_line(aes(time,hospital_admission,colour='hospital_admissions'))+
 ```
 
 The line plot is comparing the hospital admissions and doctor visits in different states. The y-axis is the percentage of the two, and the x-axis is the time (in terms of day). This is like the sanity check of the two datasets. We can see that the patterns of two lines are similar in all 9 states, and intuitively the percentages of doctor visits and hospital admissions should follow a similar pattern. Therefore, the sanity check passes.  
+It's worth noticing that Alaska only has data for a few days, but the percentages still look similar.  
 
-What's more, we wanted to explore the 
+Next, we wanted to explore how much stress COVID-19 exerted on hospitals in the nine states. In order to achieve this, we took the ratio of hospital_admissions to doctor_visits as the KPI. If the ratio is large, it means that the needs for hospital admissions are well-satisfied, and thus no great stress on the hospitals. Vice versa.
+```{r}
+df <- df %>%
+  mutate(acceptance_ratio = doctor_visit/hospital_admission)
+ggplot(df) + geom_line(aes(time,acceptance_ratio,color=state),size=0.5) + scale_color_manual(values = c("red", "yellow", "blue",'green','purple','orange','black','grey','brown'))
+```
+
+From this plot, we can see that New York (dark), Hawaii (green), and Colorado (blue), can satisfy the hospital admissions relatively well among the nine states, as their respective lines are well-above the other lines. Therefore, New York and Hawaii were least stressed by COVID in terms of hospital admissions among the nine states from 2020-02-01 to 2021-02-01.
+However, the lines on the bottom are intertwined together, so it's hard to see the pattern. Therefore, we made a barplot to visualize the mean acceptance_ratio in the one year.
+```{r}
+df_tmp <- df %>%
+  group_by(state) %>%
+  summarise(mean_acceptance_ratio = mean(acceptance_ratio))
+ggplot(df_tmp) + geom_col(aes(x=state,y=mean_acceptance_ratio))
+```
+
+We can see that the mean for New York, Colorado, and Hawaii, are well-above the others, and Washington seems to have a relatively small mean, which means Washington suffered great stress to satisfy the need for hospital admissions. This conclusion is consistent with what we see from the last plot in which Washington (brown) had been well-below the others throughout the year.
+
+
+```{r}
+weekly_data_visit_raw <- covidcast_signal("doctor-visits", "smoothed_cli", start_day = "2020-02-01", end_day = "2021-02-01", geo_type='state')
+weekly_data_visit <- weekly_data_visit_raw[c('geo_value','time_value','value')]
+weekly_data_visit <- weekly_data_visit[weekly_data_visit$geo_value != 'vi',]
+weekly_data_visit$geo_value <- toupper(weekly_data_visit$geo_value)
+
+visits_by_state <- weekly_data_visit %>%
+  group_by(geo_value) %>%
+  summarise(doctor_visits_per_day = mean(value))
+```
+
+We removed 'VI' - Virgin Islands, because it is not an official state of the U.S.
+
+```{r}
+library(USAboundaries)
+library(sf)
+states <- us_states()
+states <- states %>%
+  mutate(doctor_visit = visits_by_state$doctor_visits_per_day)
+  
+p <- ggplot(states)+
+  geom_sf(aes(fill=doctor_visit))
+library(plotly)
+ggplotly(p)
+```
+
+
 
 

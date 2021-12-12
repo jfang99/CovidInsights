@@ -24,7 +24,7 @@
 <meta name="author" content="Zhe Hou &amp; Jingfei Fang" />
 
 
-<meta name="date" content="2021-12-11" />
+<meta name="date" content="2021-12-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -52,6 +52,13 @@
 
 <link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
 <script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="libs/plotly-binding-4.10.0/plotly.js"></script>
+<script src="libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.1.1/js/crosstalk.min.js"></script>
+<link href="libs/plotly-htmlwidgets-css-2.5.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="libs/plotly-main-2.5.1/plotly-latest.min.js"></script>
 
 
 
@@ -114,14 +121,14 @@ For a fixed time t and location i, there are counts of Covid-like symptoms, Flu-
 <p>To enhance variablility, a local linear regression filter with a Gaussian kernel is applied, the bandwidth is set to 7 to cover a rolling 7-day window.</p>
 <p>Note that we only picked nine states for analysis: 2 from west coast (CA, WA), 2 from east coast (NY, VA), 2 from middle (CO, KS, MO), and two relatively remote states (HI, AK). And we analyzed data from 2020-02-01 to 2021-02-01.</p>
 <p>However, after smoothing the data, the standard error estimate is claimed to be inaccurate any more, so the standard error appears to be missing the dataset and we just removed the column.</p>
-<p>Hence, the resulting variables in the dataset are: ‘location’, ‘time’, ‘smoothed estimated percentage of COVID-related doctor’s vistis’.</p>
+<p>Hence, the resulting variables in the dataset are: ‘location’, ‘time’, ‘smoothed estimated percentage of COVID-related doctor’s vistis’. There are 3303 samples in total, corresponding to different time and locations.</p>
 </div>
 <div id="hospital-admissions-data" class="section level2">
 <h2><span class="header-section-number">3.2</span> Hospital Admissions Data</h2>
 <p>This data is also retrieved using COVIDcast Epidata API. It is the data of the estimated percentage of new hospital admissions with COVID-related symptoms. The data also comes from Carnegie Mellon University’s health system partners.</p>
 <p>For consistency, we also picked the nine states and the same time interval.
 This data went through the same smoothing adjustment as above. So for the same reason, we removed the columns associated with standard error.</p>
-<p>The resulting variables are: ‘location’, ‘time’, ‘smoothed estimated percentage of new hospital admissions related to COVID’.</p>
+<p>The resulting variables are: ‘location’, ‘time’, ‘smoothed estimated percentage of new hospital admissions related to COVID’. There are 2952 sample in total, corresponding to different time and locations.</p>
 
 </div>
 </div>
