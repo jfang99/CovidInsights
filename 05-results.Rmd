@@ -1,6 +1,6 @@
 # Results
 ## Doctor Visits vs. Hospital Admissions
-```{r,message=F,warning=F}
+```{r,warning=F}
 doctor_visit_data_raw <- covidcast_signal("doctor-visits", "smoothed_cli", start_day = "2020-02-01", end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','ak','co','hi','wa','ks','va','mo'))
 doctor_visit_data <- doctor_visit_data_raw[c('geo_value','time_value','value')]
 

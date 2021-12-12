@@ -24,7 +24,7 @@ However, after smoothing the data, the standard error estimate is claimed to be 
 ```{r}
 doctor_visit_data <- doctor_visit_data_raw[c('geo_value','time_value','value')]
 ```
-Hence, the resulting variables in the dataset are: 'location', 'time', 'smoothed estimated percentage of COVID-related doctor's vistis'. 
+Hence, the resulting variables in the dataset are: 'location', 'time', 'smoothed estimated percentage of COVID-related doctor's vistis'. There are 3303 samples in total, corresponding to different time and locations.
 
 ## Hospital Admissions Data
 This data is also retrieved using COVIDcast Epidata API. It is the data of the estimated percentage of new hospital admissions with COVID-related symptoms. The data also comes from Carnegie Mellon University's health system partners. 
@@ -39,7 +39,7 @@ This data went through the same smoothing adjustment as above. So for the same r
 hospital_data <- hospital_data_raw[c('geo_value','time_value','value')]
 ```
 
-The resulting variables are: 'location', 'time', 'smoothed estimated percentage of new hospital admissions related to COVID'.
+The resulting variables are: 'location', 'time', 'smoothed estimated percentage of new hospital admissions related to COVID'. There are 2952 sample in total, corresponding to different time and locations.
 
 
 
