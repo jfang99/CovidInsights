@@ -1,39 +1,46 @@
 # Missing values
+
 ```{r}
 #install.packages("covidcast")
 library(covidcast)
 library(tidyverse)
 library(patchwork)
 ```
+
+## Doctor Visit Data
 ```{r}
-#data <- covidcast_signal("doctor-visits", "smoothed_cli", start_day = "2020-05-01", end_day = "2020-06-07")
+source('plot_missing.R')
+```
+```{r}
+doctor_visit_data_raw <- covidcast_signal("doctor-visits", "smoothed_cli", start_day = "2020-02-01", end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','tx','co','hi','wa','ks','va','mo'))
 ```
 
+```{r}
+plot_missing(doctor_visit_data_raw)
+```
+
+In the raw data, we found that there are two columns (sample_size & stderr) that consist of only missing values, and the other columns don't have missing values. 
 The following is the number of missing values in each column:
+```{r,warning=F}
+colSums(is.na(doctor_visit_data_raw)) %>%
+  sort(decreasing = TRUE)
+```
+Since the two columns have only missing values, we could just discard these two columns just as we discard the columns that consist of the same value all the way through.
+
+## Hospital Admission Data
+```{r}
+hospital_data_raw <- covidcast_signal("hospital-admissions", "smoothed_covid19_from_claims", start_day = "2020-02-01", end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','tx','co','hi','wa','ks','va','mo'))
+```
+```{r}
+plot_missing(hospital_data_raw)
+```
 
 ```{r,warning=F}
-# colSums(is.na(data)) %>%
-#   sort(decreasing = TRUE)
-# dp <- data[1:30,]
-# dp <- dp %>% 
-#     rownames_to_column("id") %>% 
-#     gather(key, value, -id) %>% 
-#     mutate(missing = ifelse(is.na(value), "yes", "no"))
-# dp$id <- factor(dp$id, levels = c(1:30))
-# ggplot(dp, aes(x = key, y = fct_rev(id), fill = missing)) +
-#   geom_tile(color = "white") + 
-#   ggtitle("missing value heatmap") +
-#   scale_fill_viridis_d() + # discrete scale
-#   xlab("variables")+
-#   ylab("data(May)")+
-#   theme_bw()+
-#   theme(text = element_text(size=10),
-#         axis.text.x = element_text(angle=50, hjust=1))
+colSums(is.na(hospital_data_raw)) %>%
+  sort(decreasing = TRUE)
 ```
 
-```{r}
-# source("plot_missing.R")
-# plot_missing(data, percent = TRUE)
-```
+Same situation here, so we just removed the two columns consisting of only missing values.
 
-We found that there are two columns that consist of only missing values, and the other columns don't have missing values. So there is only one pattern of missing values, as suggested by the plot. Since the two whole columns are missing values, we could just discard these two columns when analyzing.
+## The other datasets
+Actually the same situation for the other datasets, so we just removed the columns consisting of missing values.

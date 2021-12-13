@@ -1,2 +1,18 @@
 # Conclusion
+## Summary
+There is no clear geographical pattern about the seriousness of COVID-19 in the U.S. So we picked 9 states for analysis: 2 from west coast (CA, WA), 2 from east coast (NY, VA), 2 from middle (CO, KS, MO), 1 from south (TX), and 1 relatively remote states (HI). The time interval was set to be from 2020-02-01 to 2021-02-01.
+
+First, we examined how COVID-19 impacted bars and restaurants. We discovered that bars and Restaurants are affected by the pandemic in different level. Unfortunately, bars are affected more, we speculate that it's because going to bars are not necessary for many people, it's more like a way for fun and can be easily replaced by other means, and what's more, bars are usually full of people, and people are more likely to be infected. But as for restaurants, eating outside is necessary for many people, because their work is too busy so that they have no time to cook for themselves or their lack of cooking skills, so after a short decrease at the beginning of outbreak of pandemic, people eating outside became a lot again.
+
+After that, we analyzed the stress exerted on hospitals by COVID-19. We took the ratio of COVID-related doctor_visits to COVID-repated hospital_admissions as the KPI, and found out that New York, Hawaii and Colorado suffered less stress from satisfying hospital needs among the 9 states we analyzed, and Washington suffered the most. 
+
+At last, we investigated how COVID-19 influenced people's mental health and financial situation by using the data from Facebook surveys. It turned out that the feeling of depression and isolation always came together. There was another not very intuitive conclusion that less financial difficulty tended to come with more depression. We also got an unexpected discovery that the number of bar visits were correlated with the number of restaurant visits, and that people in Washington (using the Safegraph APP) had a very low frequency of going to restaurants. 
+
+## Limitation
+1. Due to the privacy problem, the Google search data is processed by Google, to be more specific, they  adds artificial noise to the raw data to avoid any individual persons is identified and some data are incomplete, and this may affect analysis potentially. If it's possible, analyze on the original data is better in the future.
+2. We only picked 9 states, and that may not be general enough. One improvement would be picking more states to see if the patterns we found still apply.
+
+## Lesson Learned
+Dive into data. We may think data pattern is obvious or the data is easy so that we have so little to analyze, but if you observe the data carefully, perform various transformations on the data, you may then find some interesting results that you haven't expect before.
+
 

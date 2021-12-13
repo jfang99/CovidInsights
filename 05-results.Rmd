@@ -1,49 +1,14 @@
 # Results
-## Doctor Visits vs. Hospital Admissions
 ```{r}
 #install.packages("covidcast")
 library(covidcast)
 library(tidyverse)
 library(patchwork)
+library(GGally)
 ```
 
-```{r,warning=F}
-doctor_visit_data_raw <- covidcast_signal("doctor-visits", "smoothed_cli", start_day = "2020-02-01", end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','ak','co','hi','wa','ks','va','mo'))
-doctor_visit_data <- doctor_visit_data_raw[c('geo_value','time_value','value')]
-
-hospital_data_raw <- covidcast_signal("hospital-admissions", "smoothed_covid19_from_claims", start_day = "2020-02-01", end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','ak','co','hi','wa','ks','va','mo'))
-hospital_data <- hospital_data_raw[c('geo_value','time_value','value')]
-```
-```{r}
-df <- hospital_data %>% inner_join(doctor_visit_data, by=c("geo_value", "time_value"))
-colnames(df) <- c('state','time','hospital_admission','doctor_visit')
-dict = c('Alaska','California','Colorado','Hawaii','Kansas', 'Missouri', 'New York', 'Virginia', 'Washington')
-names(dict) = c('ak','ca','co','hi','ks','mo','ny','va','wa')
-df$state <- dict[df$state]
-ggplot(df)+geom_line(aes(time,hospital_admission,colour='hospital_admissions'))+geom_line(aes(time,doctor_visit,colour='doctor_visits'))+facet_wrap(vars(state)) + scale_colour_manual("", values = c("hospital_admissions"="blue", "doctor_visits"="red"))+theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1,size=6)) + xlab('Time') + ylab('Percentage')
-```
-
-The line plot is comparing the hospital admissions and doctor visits in different states. The y-axis is the percentage of the two, and the x-axis is the time (in terms of day). This is like the sanity check of the two datasets. We can see that the patterns of two lines are similar in all 9 states, and intuitively the percentages of doctor visits and hospital admissions should follow a similar pattern. Therefore, the sanity check passes.  
-It's worth noticing that Alaska only has data for a few days, but the percentages still look similar.  
-
-Next, we wanted to explore how much stress COVID-19 exerted on hospitals in the nine states. In order to achieve this, we took the ratio of hospital_admissions to doctor_visits as the KPI. If the ratio is large, it means that the needs for hospital admissions are well-satisfied, and thus no great stress on the hospitals. Vice versa.
-```{r}
-df <- df %>%
-  mutate(acceptance_ratio = doctor_visit/hospital_admission)
-ggplot(df) + geom_line(aes(time,acceptance_ratio,color=state),size=0.5) + scale_color_manual(values = c("red", "yellow", "blue",'green','purple','orange','black','grey','brown'))
-```
-
-From this plot, we can see that New York (dark), Hawaii (green), and Colorado (blue), can satisfy the hospital admissions relatively well among the nine states, as their respective lines are well-above the other lines. Therefore, New York and Hawaii were least stressed by COVID in terms of hospital admissions among the nine states from 2020-02-01 to 2021-02-01.
-However, the lines on the bottom are intertwined together, so it's hard to see the pattern. Therefore, we made a barplot to visualize the mean acceptance_ratio in the one year.
-```{r}
-df_tmp <- df %>%
-  group_by(state) %>%
-  summarise(mean_acceptance_ratio = mean(acceptance_ratio))
-ggplot(df_tmp) + geom_col(aes(x=state,y=mean_acceptance_ratio))
-```
-
-We can see that the mean for New York, Colorado, and Hawaii, are well-above the others, and Washington seems to have a relatively small mean, which means Washington suffered great stress to satisfy the need for hospital admissions. This conclusion is consistent with what we see from the last plot in which Washington (brown) had been well-below the others throughout the year.
-
+## Geographical Pattern of COVID-19
+We are interested in the geogrphical patterns about the seriousness of COVID-19. Therefore, we made an interactive plot to visualize the average percentage of COVID-related doctor visits in different states.
 
 ```{r}
 weekly_data_visit_raw <- covidcast_signal("doctor-visits", "smoothed_cli", start_day = "2020-02-01", end_day = "2021-02-01", geo_type='state')
@@ -56,20 +21,283 @@ visits_by_state <- weekly_data_visit %>%
   summarise(doctor_visits_per_day = mean(value))
 ```
 
-We removed 'VI' - Virgin Islands, because it is not an official state of the U.S.
-
-```{r}
+```{r, warning=F}
 library(USAboundaries)
 library(sf)
 states <- us_states()
+visits_by_state <- visits_by_state[!visits_by_state$geo_value %in% c('HI','PR','AK'),]
+values <- visits_by_state$doctor_visits_per_day
+names(values) <- visits_by_state$geo_value
 states <- states %>%
-  mutate(doctor_visit = visits_by_state$doctor_visits_per_day)
-  
-p <- ggplot(states)+
-  geom_sf(aes(fill=doctor_visit))
+  filter(!name %in% c('Hawaii', 'Puerto Rico', 'Alaska')) %>%
+  mutate(doctor_visit_percentage = values[state_abbr])
+
+
 library(plotly)
-ggplotly(p)
+plot_ly(states, split = ~state_abbr, color = ~ doctor_visit_percentage , showlegend = F, alpha = 1,colors=c('#FFFFE0','#0000FF')) %>% layout(title="Doctor-Visit Geographical Distribution")
 ```
+
+We can see that New York (NY) and Minnesota (MN) suffered most from COVID-related doctor visits, and Montana (MT) did not have many COVID-related doctor visits during that one year. However, we can not see a clear geographical pattern from the plot. Thus, we picked we picked nine states all over the continent of the U.S. for analysis.
+
+
+## Impact of COVID-19 on Bars and Restaurants
+```{r pressure, echo=FALSE, warning=FALSE}
+gdata <- covidcast_signal("google-symptoms", "sum_anosmia_ageusia_raw_search", start_day = "2020-02-01", end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','tx','co','hi','wa','ks','va','mo'))
+gdata <- gdata %>% select(geo_value, time_value, value)
+names(gdata) <- c("geo_value", "time_value", "value_gdata")
+dict = c('Houston','California','Colorado','Hawaii','Kansas', 'Missouri', 'New York', 'Virginia', 'Washington')
+names(dict) = c('tx','ca','co','hi','ks','mo','ny','va','wa')
+gdata$geo_value <- dict[gdata$geo_value]
+
+ggplot(gdata)+geom_point(aes(time_value,value_gdata), color="red")+facet_wrap(vars(geo_value)) + xlab("Time") + ylab("releative popularity of symptom-related searches") + labs(title = 'Google Search Trends') + theme(plot.title = element_text(hjust = 0.5))
+```
+
+This is a visualization of Google search volume for anosmia and ageusia related searches. We can see that search volume exploded in March, obviously this is because the first break of covid-19, and the virus caught people's attention for the first time. After that, anosmia and ageusia related searches became stabilized, however, it showed a increasing trend in December, we speculate that it's because there was a small outbreak of covid at that time. To find out how pandemic influences people and economy, we then explored data of bar visits and restaurant visits.
+
+
+```{r echo=FALSE, warning=FALSE}
+# doctor visit
+ddata <- covidcast_signal("doctor-visits", "smoothed_cli", start_day = "2020-02-01", end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','tx','co','hi','wa','ks','va','mo'))
+
+#ggplot(ddata)+geom_point(aes(time_value,value))+facet_wrap(vars(geo_value))
+
+# hospital
+hdata <- covidcast_signal("hospital-admissions", "smoothed_covid19_from_claims", start_day = "2020-02-01", end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','tx','co','hi','wa','ks','va','mo'))
+
+#ggplot(hdata)+geom_point(aes(time_value,value))+facet_wrap(vars(geo_value))
+
+a <- ddata %>% select(geo_value, time_value, value)
+names(a) <- c("geo_value", "time_value", "value_a")
+b <- hdata %>% select(geo_value, time_value, value)
+names(b) <- c("geo_value", "time_value", "value_b")
+c <- b %>% inner_join(a, by=c("geo_value", "time_value"))
+
+#ggplot(c)+geom_point(aes(time_value,value.x))+geom_point(aes(time_value,value.y))+facet_wrap(vars(geo_value))
+
+#ny <- c %>% filter(geo_value=="ny")
+#ggplot(ny)+geom_line(aes(time_value,value.x))
+
+# bar visit
+bdata <- covidcast_signal("safegraph", "bars_visit_prop", start_day = "2020-02-01", end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','tx','co','hi','wa','ks','va','mo'))
+bdata <- bdata %>% select(geo_value, time_value, value)
+names(bdata) <- c("geo_value", "time_value", "value_bdata")
+d <- c %>% inner_join(bdata, by=c("geo_value", "time_value"))
+#ggplot(d)+geom_point(aes(value_a,value_bdata))+facet_wrap(vars(geo_value))+xlab("covid related hospital visits")+ylab("bar visits (per 100,000 people)") #-----------------------------
+
+d1 <- d %>% select(time_value, geo_value, value_bdata) %>% pivot_wider(names_from = geo_value, values_from = value_bdata)
+
+d2 <- d %>% select(time_value, geo_value, value_bdata) %>% filter(time_value<as.Date("2021-02-01")) %>% mutate(month=months(time_value)) %>% select(-time_value) %>% group_by(geo_value, month) %>% summarise(value_b=sum(value_bdata)) %>% ungroup()
+
+d2 <- d2%>% pivot_wider(names_from = month, values_from = value_b)
+d2 <- d2 %>% select(geo_value, February, March, April, May, June, July, August, September, October, November, December, January)
+dict = c('Houston','California','Colorado','Hawaii','Kansas', 'Missouri', 'New York', 'Virginia', 'Washington')
+names(dict) = c('tx','ca','co','hi','ks','mo','ny','va','wa')
+d2$geo_value <- dict[d2$geo_value]
+
+ggparcoord(d2, columns = 2:13, alphaLines = .5,
+           scale = "globalminmax", groupColumn = 1) +theme(axis.text.x = element_text(angle = 45)) + xlab("time") +ylab("number of visits (per 100,000 population)") +labs(title = 'Bar Visits') + theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+As we all know, covid start to outbreak in February 2020. From the graph we can also see that after the outbreak of virus, bar visits and restaurant visits dropped sharply, and because the pandemic continued, these numbers stay low. Correspondingly, we can see that bar visits and restaurant visits are a little bit low in December, which is consistent with what we found before, and this also indicates that people have some attention on the pandemic, and some people indeed reduced the number of visits to the bar.
+
+
+
+```{r echo=FALSE, warning=FALSE}
+# res visit
+rdata <- covidcast_signal("safegraph", "restaurants_visit_prop", start_day = "2020-02-01", end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','tx','co','hi','wa','ks','va','mo'))
+rdata <- rdata %>% select(geo_value, time_value, value)
+names(rdata) <- c("geo_value", "time_value", "value_rdata")
+e <- d %>% inner_join(rdata, by=c("geo_value", "time_value"))
+
+#ggplot(e)+geom_point(aes(value_a,value_rdata))+facet_wrap(vars(geo_value))+xlab("covid related hospital visits")+ylab("resturant visits (per 100,000 people)") #-----------------------------
+
+d2 <- e %>% select(time_value, geo_value, value_rdata) %>% filter(time_value<as.Date("2021-02-01")) %>% mutate(month=months(time_value)) %>% select(-time_value) %>% group_by(geo_value, month) %>% summarise(value_r=sum(value_rdata)) %>% ungroup()
+
+d2 <- d2%>% pivot_wider(names_from = month, values_from = value_r)
+d2 <- d2 %>% select(geo_value, February, March, April, May, June, July, August, September, October, November, December, January)
+dict = c('Houston','California','Colorado','Hawaii','Kansas', 'Missouri', 'New York', 'Virginia', 'Washington')
+names(dict) = c('tx','ca','co','hi','ks','mo','ny','va','wa')
+d2$geo_value <- dict[d2$geo_value]
+
+ggparcoord(d2, columns = 2:13, alphaLines = .5,
+           scale = "globalminmax", groupColumn = 1) +theme(axis.text.x = element_text(angle = 45)) + xlab("time") +ylab("number of visits (per 100,000 population)") +labs(title = 'Restaurant Visits') + theme(plot.title = element_text(hjust = 0.5))
+
+```
+Here for restaurants we see a remarkably different pattern. We can see that after the first outbreak of the pandemic, people eating outside deceased sharply, however, after April, this number increased, which means that many people started to eat outside again. Maybe it's because eating outside for many people is necessary due to the lack of cooking skills or it's important way for them to have fun with friends.
+
+```{r echo=FALSE, warning=FALSE}
+dd <- d
+dict = c('Houston','California','Colorado','Hawaii','Kansas', 'Missouri', 'New York', 'Virginia', 'Washington')
+names(dict) = c('tx','ca','co','hi','ks','mo','ny','va','wa')
+dd$geo_value <- dict[dd$geo_value]
+
+ggplot(dd)+geom_point(aes(value_a,value_bdata), color="red")+facet_wrap(vars(geo_value))+xlab("covid related hospital visits")+ylab("number of visits (per 100,000 population)") +labs(title = 'Bar Visits  VS  Covid Related Hospital Visits') + theme(plot.title = element_text(hjust = 0.5))
+```
+To find out the influence of pandemic on bar visits, here we combine the data of covid related hospital visits, which indicates the seriousness of pandemic, and bar visits. Form the graph we can see that when covid related hospital visits is close to 0, many people like going to bar for fun, but after the covid pandemic became serious, especially when there are more and more covid cases and covid related hospital visits increased, number of people going to bar decreased. For example, Hiwaii, there are more than 600 people per 100,000 people going to bar in some no covid day, but after the increase of covid related visits, which indicates severer of pandemic, it never happen again that there are so many people going to bar.
+
+```{r echo=FALSE, warning=FALSE}
+ee <- e
+dict = c('Houston','California','Colorado','Hawaii','Kansas', 'Missouri', 'New York', 'Virginia', 'Washington')
+names(dict) = c('tx','ca','co','hi','ks','mo','ny','va','wa')
+ee$geo_value <- dict[ee$geo_value]
+
+ggplot(ee)+geom_point(aes(value_a,value_rdata), color="red")+facet_wrap(vars(geo_value))+xlab("covid related hospital visits")+ylab("number of visits (per 100,000 population)") +labs(title = 'Restaurant Visits VS Covid Related Hospital Visits') + theme(plot.title = element_text(hjust = 0.5))
+```
+
+
+However, in the graph of covid related hospital visits VS resturant visits (per 100,000 population), we find that after pandemic, even if people eat outside have some decreasing, but many people still choose eat outside, especially for Missouri and Kansas, which is  consistent with our findings before.
+
+
+```{r echo=FALSE, warning=FALSE}
+e1 <- e %>% select(geo_value, value_a, value_bdata, value_rdata) %>% pivot_longer(-c(geo_value, value_a), names_to = "location", values_to = "visit_value")
+
+dict = c('Houston','California','Colorado','Hawaii','Kansas', 'Missouri', 'New York', 'Virginia', 'Washington')
+names(dict) = c('tx','ca','co','hi','ks','mo','ny','va','wa')
+e1$geo_value <- dict[e1$geo_value]
+
+dict1 = c("bar visit", "restaurant visit")
+names(dict1) = c("value_bdata", "value_rdata")
+e1$location <- dict1[e1$location]
+
+ggplot(e1)+geom_point(aes(value_a,visit_value, color=location, alpha=0.2))+facet_wrap(vars(geo_value))+xlab("covid related hospital visits")+ylab("resturant visits (per 100,000 people)") +labs(title = 'Camparasion of Bar Visits and Restaurant Visits') + theme(plot.title = element_text(hjust = 0.5))
+
+
+```
+
+When put data of bar visits and resturant visits into on graph, we can see that people eating outside significantly higher than people visiting the bar. Especially in Hiwaii, when the pandemic is not so serious, people going to bar is more than people eating outside, but during the serious pandemic, there are more people eating outside than people going to bar surprisingly, so we think that influence of pandemic on bars may be bigger than on resturants.
+
+```{r echo=FALSE, warning=FALSE}
+e2 <- e %>% group_by(geo_value) %>% summarise(mean_b = mean(value_bdata), mean_r = mean(value_rdata)) %>% ungroup()
+names(e2) <- c("geo_value", "bar", "resturant")
+e2 <- e2 %>% pivot_longer(-geo_value, names_to = "location", values_to = "value")
+#ggplot(e2, aes(x = location, y = value, group = geo_value)) +geom_line()
+
+f <- e %>% mutate(times=ifelse(value_a>1, "serious", "not serious"))
+dict = c('Houston','California','Colorado','Hawaii','Kansas', 'Missouri', 'New York', 'Virginia', 'Washington')
+names(dict) = c('tx','ca','co','hi','ks','mo','ny','va','wa')
+f$geo_value <- dict[f$geo_value]
+e2 <- f %>% group_by(geo_value, times) %>% summarise(mean_b = mean(value_bdata), mean_r = mean(value_rdata)) %>% ungroup()
+names(e2) <- c("geo_value", "times", "bar", "resturant")
+e2 <- e2 %>% pivot_longer(-c(geo_value, times), names_to = "location", values_to = "value")
+e2$times <- factor(e2$times, c("not serious", "serious"))
+ggplot(e2, aes(x = times, y = value, group = geo_value, color=geo_value)) +geom_line() + facet_wrap(vars(location)) + ylab("number of visits (per 100,000 people)") +xlab("situations")+labs(title = 'Camparasion Between Different Situations') + theme(plot.title = element_text(hjust = 0.5))
+```
+
+
+To observe the influence of covid-19 on resturants and bars more clearly, we draw a slope graph to compare bar and resturant visits when pandemic is serious to  when there pandemic is not serious. Here we define that when percentage of outpatient doctor visits primarily about COVID-related symptoms is less than or equal to 1, we take it as pandemic is not serious, when percentage of outpatient doctor visits primarily about COVID-related symptoms is greater than 1, we take it as pandemic is serious. We can clearly find that even during time when covid-19 become more serious, people eating outside didn't decrease much. When considering proportion, we can see that proportion of deacreasing number of bar visits is higher than that of resturant visits, so we can say that influence of covid-19 on bars is higher than resturants. There are many reasons can lead to this situation, we speculate that maybe it's because bar isn't necessary for many people's life, but restaurants are. In addtion, bars are more crowded, which makes it more dangerous during pandemic.
+
+
+## Stressed Exerted on Hospitals by COVID-19
+```{r,warning=F}
+doctor_visit_data_raw <- covidcast_signal("doctor-visits", "smoothed_cli", start_day = "2020-02-01", end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','tx','co','hi','wa','ks','va','mo'))
+doctor_visit_data <- doctor_visit_data_raw[c('geo_value','time_value','value')]
+
+hospital_data_raw <- covidcast_signal("hospital-admissions", "smoothed_covid19_from_claims", start_day = "2020-02-01", end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','tx','co','hi','wa','ks','va','mo'))
+hospital_data <- hospital_data_raw[c('geo_value','time_value','value')]
+```
+```{r}
+df <- hospital_data %>% inner_join(doctor_visit_data, by=c("geo_value", "time_value"))
+colnames(df) <- c('state','time','hospital_admission','doctor_visit')
+dict = c('Houston','California','Colorado','Hawaii','Kansas', 'Missouri', 'New York', 'Virginia', 'Washington')
+names(dict) = c('tx','ca','co','hi','ks','mo','ny','va','wa')
+df$state <- dict[df$state]
+ggplot(df)+geom_line(aes(time,hospital_admission,colour='hospital_admissions'))+geom_line(aes(time,doctor_visit,colour='doctor_visits'))+facet_wrap(vars(state)) + scale_colour_manual("", values = c("hospital_admissions"="blue", "doctor_visits"="red"))+theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1,size=6)) + xlab('Time') + ylab('Percentage') + labs(title = 'Doctor Visit vs. Hospital Admission') + theme(plot.title = element_text(hjust = 0.5))
+```
+
+The line plos are comparing the COVID-related hospital admissions and COVID-related doctor visits in different states. The y-axis is the percentage of the two, and the x-axis is the time (in terms of day). This is like the sanity check of the two datasets. We can see that the patterns of two lines are similar in all 9 states, and intuitively the percentages of doctor visits and hospital admissions should follow a similar pattern. Therefore, the sanity check passes.
+
+Next, we wanted to explore how much stress COVID-19 exerted on hospitals in the nine states. In order to achieve this, we took the ratio of COVID-related doctor_visits to COVID-repated hospital_admissions as the KPI. If the ratio is large, it means that the needs for hospital admissions are well-satisfied, and thus no great stress on the hospitals. Vice versa.
+```{r}
+df <- df %>%
+  mutate(acceptance_ratio = doctor_visit/hospital_admission)
+ggplot(df) + geom_line(aes(time,acceptance_ratio,color=state),size=0.5) + scale_color_manual(values = c("red", "yellow", "blue",'green','purple','orange','black','grey','brown')) + labs(title = 'Acceptance Ratio by State') + theme(plot.title = element_text(hjust = 0.5)) + ylab('Acceptance Ratio') + xlab('Time')
+```
+
+From this plot, we can see that New York (black), Hawaii (blue), and Colorado (yellow), could satisfy the hospital needs relatively well among the nine states, as their respective lines are well-above the other lines. Therefore, New York and Hawaii were least stressed by COVID in terms of hospital admissions among the nine states from 2020-02-01 to 2021-02-01. It's worth noticing that although New York was among the states with highest percentages of COVID-related doctor visits, it was among the states that were least stressed by COVID in terms of hospital admissions.  
+
+However, the lines on the bottom are intertwined together, so it's hard to see the pattern. Therefore, we made a barplot to visualize the mean acceptance_ratio in the one year.
+```{r}
+df_tmp <- df %>%
+  group_by(state) %>%
+  summarise(mean_acceptance_ratio = mean(acceptance_ratio))
+ggplot(df_tmp) + geom_col(aes(x=state,y=mean_acceptance_ratio)) +labs(title = 'Mean Acceptance Ratio in each State') + theme(plot.title = element_text(hjust = 0.5))
+```
+
+We can see that the mean for New York, Colorado, and Hawaii, are well-above the others, and Washington seems to have a relatively small mean, which means Washington suffered great stress to satisfy the need for hospital admissions. This conclusion is consistent with what we see from the last plot in which Washington (brown) had been well-below the others throughout the year.
+
+
+## Impact of COVID-19 on Mental Health and Financial Situation
+Now we want to investigate how COVID-19 influenced people's mental health and financial situation. Specifically, we will use data from Facebook surveys about people's feeling of depression, isolation, and financial difficulty. Note that the date is from 2020-09-08 to 2021-02-01.
+```{r}
+finance_raw <- covidcast_signal("fb-survey", "smoothed_wworried_finances", start_day = "2020-09-08",
+                         end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','tx','co','hi','wa','ks','va','mo'))
+finance <- finance_raw[c('geo_value','time_value','value')]
+```
+```{r}
+depressed_raw <- covidcast_signal("fb-survey", "smoothed_wdepressed_5d", start_day = "2020-09-08",
+                         end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','tx','co','hi','wa','ks','va','mo'))
+depressed <- depressed_raw[c('geo_value','time_value','value')]
+```
+```{r}
+isolated_raw <- covidcast_signal("fb-survey", "smoothed_wfelt_isolated_5d", start_day = "2020-09-08",
+                         end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','tx','co','hi','wa','ks','va','mo'))
+isolated <- depressed_raw[c('geo_value','time_value','value')]
+```
+```{r}
+ill_raw <- covidcast_signal("fb-survey", "smoothed_wworried_become_ill", start_day = "2020-09-08",
+                         end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','tx','co','hi','wa','ks','va','mo'))
+ill <- depressed_raw[c('geo_value','time_value','value')]
+```
+```{r,warning=F}
+restaurant_data_raw <- covidcast_signal("safegraph", "restaurants_visit_prop", start_day = "2020-09-08", end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','tx','co','hi','wa','ks','va','mo'))
+restaurant_data <- restaurant_data_raw[c('geo_value','time_value','value')]
+```
+```{r,warning=F}
+bar_data_raw <- covidcast_signal("safegraph", "bars_visit_prop", start_day = "2020-09-08", end_day = "2021-02-01", geo_type='state',geo_values=c('ny','ca','tx','co','hi','wa','ks','va','mo'))
+bar_data <- bar_data_raw[c('geo_value','time_value','value')]
+```
+
+We extrapolated that restaurant visits or bar visits may help with negative emotions, and negative emotions may affect each other (e.g. financial difficulty may result in more depression) Therefore, we put together the following data: percentage of people who feel depressed, percentage of people who feel isolation, percentage of people who feel financial difficulty, number of bar visits per 100000 people, number of restaurant visits per 100000 people; and made a biplot to investigate if there's any relationship between them.
+```{r}
+df_raw <- finance %>% 
+  inner_join(depressed, by=c("geo_value", "time_value")) %>% 
+  inner_join(isolated, by=c("geo_value", "time_value")) %>%
+  inner_join(restaurant_data, by=c("geo_value", "time_value")) %>%
+  inner_join(bar_data, by=c("geo_value", "time_value"))
+colnames(df_raw) <- c('geo_value','time_value','finance','depressed','isolated','restaurant_visit','bar_visit')
+
+df <- df_raw[,c('finance','depressed','isolated','restaurant_visit','bar_visit')]
+library(stats)
+pc <- prcomp(x = df,center=T,scale.=T)
+biplot(pc,cex=0.5,main='Biplot')
+```
+
+```{r}
+summary(pc)
+```
+
+As indicated above, 77.65 percent of the variances can be explained by the first two PCs.  
+
+From the biplot, we can see that the percentage of isolation and the percentage of depression are highly correlated, as the two arrows are even superposed on each other in the plot. This is intuitive because depression and feeling of isolation always come together.  
+What's more, the percentage of feeling financial difficulty was negatively correlated with both of them. It means that people with less financial difficulty feel more depression (or isolation) during COVID situation. This is not an intuitive observation, but a far-fetched explanation could be that wealthier people would have more means to learn about the COVID situation and thus get more depressed.  
+
+From the biplot, we can also see that the number of bar visits and the number of restaurant visits are positively correlated, and they don't seem to be correlated with either financial difficulty, depression or isolation. Therefore, we drew scatterplots of Restaurant Visit vs. Bar Visit, faceted by states, to explore the relationship between the two variables.
+```{r}
+df_bar_restaurant <- df_raw[,c('restaurant_visit','bar_visit','geo_value')]
+dict = c('Houston','California','Colorado','Hawaii','Kansas', 'Missouri', 'New York', 'Virginia', 'Washington')
+names(dict) = c('tx','ca','co','hi','ks','mo','ny','va','wa')
+df_bar_restaurant$geo_value <- dict[df_bar_restaurant$geo_value]
+ggplot(df_bar_restaurant,aes(bar_visit,restaurant_visit)) + geom_point(alpha=0.5,cex=0.5) + facet_wrap(~ geo_value) +labs(title = 'Restaurant Visit VS Bar Visit') + geom_smooth(method='lm')+ theme(plot.title = element_text(hjust = 0.5)) + xlab('Bar Visits (per 100000 people)') + ylab('Restaurant Visits (per 100000 people)')
+```
+
+Each point represents the data of a certain day.  
+
+We can see that people in Washington didn't go to restaurants very often, and as discussed above, Washington could not satisfy the needs for hospital admissions very well. Therefore, it seems that the COVID situation was the most severe in Washington among the 9 states during that one-year period. 
+In the other 8 states, the number of bar visits and the number of restaurant visits have high correlation, as suggested by the plots. This is reasonable, because COVID situation would affect bar visits and restaurant visits simultaneously.  
+
+
+
 
 
 

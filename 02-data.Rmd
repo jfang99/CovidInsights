@@ -1,11 +1,43 @@
 # Data sources
 
-Our data comes from Delphi’s COVIDcast Epidata API.
+## Description of Data
+Our datasets all come from Delphi’s COVIDcast Epidata API. This API was developed by CMU Delphi Research Group, and we can easily fetch data in R studio using this API.
 
-This is the documentation for accessing Delphi’s COVID-19 indicators via the covidcast endpoint of Delphi’s epidemiological data API. This API provides data on the spread and impact of the COVID-19 pandemic across the United States, most of which is available at the county level and updated daily. This data powers our public COVIDcast map which includes testing, cases, and death data, as well as unique healthcare and survey data Delphi acquires through its partners. The API allows users to select specific signals and download data for selected geographical areas—counties, states, metropolitan statistical areas, and other divisions.
+Delphi’s COVIDcast Epidata API provides data of covid-19 pandemic across the United States. The data has a variety sources, for example, fb-survey, google search, Safegraph, CMU's health system partners, and so on.
 
-Delphi’s COVIDcast Epidata API provides data of covid-19 pandemic across the United States and it's updated daily. The data has a variety sources, for example, fb-survey, google search, jhu and so on, which allows us not only gain insights of covid-19 pandemic from the basic statistcs like case data and death data, but also find some interesting facts from the people's google search behaviors.
+In this book, we will use the data of Hospital Visits, Hospital Admissions, Bar Visits, Restaurant Visits, Google Search Volume, Survey about Depression, Survey about Isolation, and Survey about Financial Difficulty.
 
-More details about the data please refer to:
+## Basic information of Data
+With the help of the API, we retrieved 8 datasets.
+
+### Hospital Visits Data
+This dataset is about the estimated percentage of COVID-related doctor's vistis, based on the outpatient visits. The outpatient visits data comes from Carnegie Mellon University's health system partners.  
+There 12 variables for this dataset, but according to the description of the API, only 3 variables matter: 'location', 'time', 'smoothed estimated percentage of COVID-related doctor's vistis'.  
+For 'location', we only picked 9 states for analysis: 2 from west coast (CA, WA), 2 from east coast (NY, VA), 2 from middle (CO, KS, MO), 1 from south (TX), and 1 relatively remote states (HI). For 'time', we analyzed data of one year, from 2020-02-01 to 2021-02-01. We picked 2020-02-01 as the start date, because that is roughly when COVID-19 started wide-spreading in the U.S.
+There are 3303 samples in total, corresponding to different time and locations.  
+
+### Hospital Admissions Data
+It is the dataset of the estimated percentage of new hospital admissions with COVID-related symptoms. The data also comes from Carnegie Mellon University's health system partners.  
+The meaningful variables are: 'location', 'time', 'smoothed estimated percentage of new hospital admissions related to COVID'. 
+For consistency, we also picked the same 9 states and the same time interval. There are 3303 samples in total, corresponding to different time and locations.
+
+### Restaurant Visit Data & Bar Visit Data
+We have two datasets here, one is about restaurant visit and the other is about bar vist. Specifically, the data is the number of daily visits to restaurants (or bars) by users of the 'SafeGraph' app, per 100000 population in different states. The data is provided by the 'SafeGraph' app.  
+Still three meaningful variables here: 'location', 'time', 'visits to restaurants (or bars) by users of the 'SafeGraph' app, per 100000 population'.
+For consistency, we picked the same nine states and the same time interval as above. There are 3240 samples in total, corresponding to different time and locations.
+
+### Google Search Trends symptems data
+This data is the total number of Google search volume for anosmia (loss of smell abilities) and ageusia (loss of taste abilities) related searches. The data originally comes from Google.
+The meaningful variables are: 'location', 'time', 'sum of Google search volume for anosmia and ageusia related searches'. 
+For consistency, we also picked the same 9 states and the same time interval. There are 2837 samples in total, corresponding to different time and locations.
+
+### Survey about Depression, Isolation, and Financial Difficulty
+The three datasets are about the percentage of people who expressed depression, isolation, and financial difficulty, respectively, in a survey by Facebook. 
+Three meaningful variables here: 'location', 'time', 'percentage of people who expressed depression (or isolation, or financial difficulty)'.
+The available date for the datasets starts from 2020-09-08, so we picked the data from 2020-09-08 to 2021-02-01. The locations remain the same as above.
+
+
+
+More details about the whole data set please refer to:
 
 https://cmu-delphi.github.io/delphi-epidata/api/covidcast_licensing.html
