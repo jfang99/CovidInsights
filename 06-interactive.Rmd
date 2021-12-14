@@ -1,1 +1,444 @@
 # Interactive component
+## COVID-related Doctor Visits
+
+This is a dynamic visualization of change in the average percentage of COVID-related doctor visits by month, from Feb 2020 to Jan 2021. The y-axis indicates the average percentage of COVID-relelated doctor visits during that month, and the x-axix indicates the corresponding state. The "View All" button is the visualizaiton of the trend during the whole year. The horizontal line indicates the average of the 9 states.  
+By making it a dynamic and interactive plot, users can visualize the data for each month by clicking the button. In this way, they don't need to scroll up and down to check each month's statistics; besides, the "View All" option can let them see the trend easily.  
+Although we can see some ups-and-downs, the average percentage had been increasing very fast throughout the year. Especially during the last three months of 2020, the average percentages of COVID-related doctor visits increased by a significant amount for all 9 states.  
+
+
+<script src="https://d3js.org/d3.v6.min.js"></script>
+
+<button onclick="draw()">View All</button>
+<button onclick="draw_graph(Feb)">Feb. 2020</button>
+<button onclick="draw_graph(Mar)">Mar. 2020</button>
+<button onclick="draw_graph(Apr)">Apr. 2020</button>
+<button onclick="draw_graph(May)">May. 2020</button>
+<button onclick="draw_graph(Jun)">Jun. 2020</button>
+<button onclick="draw_graph(Jul)">Jul. 2020</button>
+<button onclick="draw_graph(Aug)">Aug. 2020</button>
+<button onclick="draw_graph(Sep)">Sep. 2020</button>
+<button onclick="draw_graph(Oct)">Oct. 2020</button>
+<button onclick="draw_graph(Nov)">Nov. 2020</button>
+<button onclick="draw_graph(Dec)">Dec. 2020</button>
+<button onclick="draw_graph(Jan)">Jan. 2021</button>
+
+<div> <svg></svg> </div>
+<div> <svg></svg> </div>
+
+<script>
+
+var Feb = [
+   {state: "California", value: 4.911978/28},
+   {state: "Colorado", value: 4.584743/28},
+   {state: "Hawaii", value: 0.090302/28},
+   {state: "Kansas", value: 1.718006/28},
+   {state: "Missouri", value: 4.45724/28},
+   {state: "New York", value: 7.087029/28},
+   {state: "Texas", value: 5.480102/28},
+   {state: "Virginia", value: 6.881053/28},
+   {state: "Washington", value: 1.444013/28}
+   
+];
+
+var Mar = [
+   {state: "California", value: 27.189654/31},
+   {state: "Colorado", value: 25.471162/31},
+   {state: "Hawaii", value: 5.636526/31},
+   {state: "Kansas", value: 11.989646/31},
+   {state: "Missouri", value: 18.085835/31},
+   {state: "New York", value: 61.611928/31},
+   {state: "Texas", value: 25.637178/31},
+   {state: "Virginia", value: 17.796065/31},
+   {state: "Washington", value: 17.631186/31}
+];
+
+var Apr = [
+   {state: "California", value: 87.261573/30},
+   {state: "Colorado", value: 140.975956/30},
+   {state: "Hawaii", value: 16.651112/30},
+   {state: "Kansas", value: 47.864891/30},
+   {state: "Missouri", value: 69.156867/30},
+   {state: "New York", value: 340.808396/30},
+   {state: "Texas", value: 72.296624/30},
+   {state: "Virginia", value: 98.885782/30},
+   {state: "Washington", value: 52.769612/30}
+];
+
+var May = [
+   {state: "California", value: 106.07512/31},
+   {state: "Colorado", value: 191.179056/31},
+   {state: "Hawaii", value: 13.203001/31},
+   {state: "Kansas", value: 41.960726/31},
+   {state: "Missouri", value: 85.367832/31},
+   {state: "New York", value: 468.542379/31},
+   {state: "Texas", value: 87.633483/31},
+   {state: "Virginia", value: 124.176575/31},
+   {state: "Washington", value: 43.368969/31}
+];
+
+var Jun = [
+   {state: "California", value: 125.174576/30},
+   {state: "Colorado", value: 129.261618/30},
+   {state: "Hawaii", value: 15.78409/30},
+   {state: "Kansas", value: 57.807183/30},
+   {state: "Missouri", value: 151.257491/30},
+   {state: "New York", value: 188.128923/30},
+   {state: "Texas", value: 223.446006/30},
+   {state: "Virginia", value: 124.90202/30},
+   {state: "Washington", value: 47.595383/30}
+];
+
+var Jul = [
+   {state: "California", value: 237.110767/31},
+   {state: "Colorado", value: 203.111977/31},
+   {state: "Hawaii", value: 32.837678/31},
+   {state: "Kansas", value: 139.009931/31},
+   {state: "Missouri", value: 340.681952/31},
+   {state: "New York", value: 224.235324/31},
+   {state: "Texas", value: 361.351857/31},
+   {state: "Virginia", value: 185.226694/31},
+   {state: "Washington", value: 101.888888/31}
+];
+
+var Aug = [
+   {state: "California", value: 178.172226/31},
+   {state: "Colorado", value: 156.491966/31},
+   {state: "Hawaii", value: 75.695594/31},
+   {state: "Kansas", value: 104.515447/31},
+   {state: "Missouri", value: 314.750352/31},
+   {state: "New York", value: 299.277346/31},
+   {state: "Texas", value: 188.746528/31},
+   {state: "Virginia", value: 180.571618/31},
+   {state: "Washington", value: 98.214082/31}
+];
+
+var Sep = [
+   {state: "California", value: 149.455903/30},
+   {state: "Colorado", value: 148.628463/30},
+   {state: "Hawaii", value: 124.872849/30},
+   {state: "Kansas", value: 130.58044/30},
+   {state: "Missouri", value: 308.560611/30},
+   {state: "New York", value: 299.186025/30},
+   {state: "Texas", value: 168.02125/30},
+   {state: "Virginia", value: 155.095897/30},
+   {state: "Washington", value: 102.382745/30}
+];
+
+var Oct = [
+   {state: "California", value: 185.847836/31},
+   {state: "Colorado", value: 226.308697/31},
+   {state: "Hawaii", value: 127.28611/31},
+   {state: "Kansas", value: 184.267858/31},
+   {state: "Missouri", value: 341.462707/31},
+   {state: "New York", value: 372.813637/31},
+   {state: "Texas", value: 255.386944/31},
+   {state: "Virginia", value: 195.527509/31},
+   {state: "Washington", value: 139.959937/31}
+];
+
+var Nov = [
+   {state: "California", value: 420.900552/30},
+   {state: "Colorado", value: 399.906982/30},
+   {state: "Hawaii", value: 113.903075/30},
+   {state: "Kansas", value: 348.994683/30},
+   {state: "Missouri", value: 582.843621/30},
+   {state: "New York", value: 605.573284/30},
+   {state: "Texas", value: 437.775021/30},
+   {state: "Virginia", value: 323.736034/30},
+   {state: "Washington", value: 282.471332/30}
+];
+
+var Dec = [
+   {state: "California", value: 650.322127/31},
+   {state: "Colorado", value: 360.2109/31},
+   {state: "Hawaii", value: 127.532846/31},
+   {state: "Kansas", value: 388.977836/31},
+   {state: "Missouri", value: 586.372943/31},
+   {state: "New York", value: 740.584503/31},
+   {state: "Texas", value: 588.7447/31},
+   {state: "Virginia", value: 489.982801/31},
+   {state: "Washington", value: 299.601257/31}
+];
+
+var Jan = [
+   {state: "California", value: 450.33158/31},
+   {state: "Colorado", value: 131.44109/31},
+   {state: "Hawaii", value: 108.237603/31},
+   {state: "Kansas", value: 227.594003/31},
+   {state: "Missouri", value: 332.830723/31},
+   {state: "New York", value: 454.840406/31},
+   {state: "Texas", value: 433.430267/31},
+   {state: "Virginia", value: 387.225547/31},
+   {state: "Washington", value: 157.72949/31}
+];
+
+// margin
+var mar = {left: 75, top: 35, right: 15, bottom: 35};
+var height = 350 - mar.top - mar.bottom;
+var width = 500 - mar.left - mar.right;
+    
+
+var svg = d3.select("svg")
+    .attr("width", width + mar.left + mar.right)
+    .attr("height", height + mar.top + mar.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + mar.left + "," + mar.top + ")");
+
+var x = d3.scaleBand()
+  .domain(Feb.map(function(d) { return d.state; }))
+  .range([ 0, width ])
+  .padding(0.25);
+svg.append("g")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x));
+  
+var y = d3.scaleLinear()
+  .domain([0, 25])
+  .range([ height, 0]);
+svg.append("g")
+  .call(d3.axisLeft(y));
+  
+function draw_graph1(d) {
+  
+  var rec = svg.selectAll("rect")
+    .data(d)
+
+  rec.enter()
+    .append("rect")
+    .merge(rec)
+    .transition()
+    .duration(1500)
+      .attr("x", d => x(d.state))
+      .attr("y", d => y(d.value))
+      .attr("width", x.bandwidth())
+      .attr("height", d => height - y(d.value))
+      .attr("fill", "lightblue")
+  
+}
+
+function draw_graph2(d) {
+  var data=0;
+  
+  for (let i = 0; i < d.length; i++) {
+  data += 1/d.length*(d[i].value);
+ }
+ data = [data]
+ 
+  svg.select("#myline")
+   .remove()
+    
+    svg.append("line")   
+    .style("stroke", "blue")
+    .attr("id", "myline")
+    .attr("x1", 0)    
+    .attr("y1", y(data))     
+    .attr("x2", mar.right+width)     
+    .attr("y2", y(data));
+}
+
+function draw_graph(d) {
+  draw_graph1(d);
+  draw_graph2(d);
+}
+
+draw_graph(Feb)
+
+function draw_Mar(){
+  draw_graph2(Mar)
+  var rec = svg.selectAll("rect").data(Mar)
+
+  rec.enter()
+    .append("rect")
+    .merge(rec)
+    .transition()
+    .duration(1500)
+      .attr("x", d => x(d.state))
+      .attr("y", d => y(d.value))
+      .attr("width", x.bandwidth())
+      .attr("height", d => height - y(d.value))
+      .attr("fill", "lightblue")
+      .on('end',draw_Apr)
+}
+function draw_Apr(){
+  draw_graph2(Apr)
+  var rec = svg.selectAll("rect").data(Apr)
+
+  rec.enter()
+    .append("rect")
+    .merge(rec)
+    .transition()
+    .duration(1500)
+      .attr("x", d => x(d.state))
+      .attr("y", d => y(d.value))
+      .attr("width", x.bandwidth())
+      .attr("height", d => height - y(d.value))
+      .attr("fill", "lightblue")
+      .on('end',draw_May)
+}
+function draw_May(){
+  draw_graph2(May)
+  var rec = svg.selectAll("rect").data(May)
+
+  rec.enter()
+    .append("rect")
+    .merge(rec)
+    .transition()
+    .duration(1500)
+      .attr("x", d => x(d.state))
+      .attr("y", d => y(d.value))
+      .attr("width", x.bandwidth())
+      .attr("height", d => height - y(d.value))
+      .attr("fill", "lightblue")
+      .on('end',draw_Jun)
+}
+function draw_Jun(){
+  draw_graph2(Jun)
+  var rec = svg.selectAll("rect").data(Jun)
+
+  rec.enter()
+    .append("rect")
+    .merge(rec)
+    .transition()
+    .duration(1500)
+      .attr("x", d => x(d.state))
+      .attr("y", d => y(d.value))
+      .attr("width", x.bandwidth())
+      .attr("height", d => height - y(d.value))
+      .attr("fill", "lightblue")
+      .on('end',draw_Jul)
+}
+function draw_Jul(){
+  draw_graph2(Jul)
+  var rec = svg.selectAll("rect").data(Jul)
+
+  rec.enter()
+    .append("rect")
+    .merge(rec)
+    .transition()
+    .duration(1500)
+      .attr("x", d => x(d.state))
+      .attr("y", d => y(d.value))
+      .attr("width", x.bandwidth())
+      .attr("height", d => height - y(d.value))
+      .attr("fill", "lightblue")
+      .on('end',draw_Aug)
+}
+function draw_Aug(){
+  draw_graph2(Aug)
+  var rec = svg.selectAll("rect").data(Aug)
+
+  rec.enter()
+    .append("rect")
+    .merge(rec)
+    .transition()
+    .duration(1500)
+      .attr("x", d => x(d.state))
+      .attr("y", d => y(d.value))
+      .attr("width", x.bandwidth())
+      .attr("height", d => height - y(d.value))
+      .attr("fill", "lightblue")
+      .on('end',draw_Sep)
+}
+function draw_Sep(){
+  draw_graph2(Sep)
+  var rec = svg.selectAll("rect").data(Sep)
+
+  rec.enter()
+    .append("rect")
+    .merge(rec)
+    .transition()
+    .duration(1500)
+      .attr("x", d => x(d.state))
+      .attr("y", d => y(d.value))
+      .attr("width", x.bandwidth())
+      .attr("height", d => height - y(d.value))
+      .attr("fill", "lightblue")
+      .on('end',draw_Oct)
+}
+function draw_Oct(){
+  draw_graph2(Oct)
+  var rec = svg.selectAll("rect").data(Oct)
+
+  rec.enter()
+    .append("rect")
+    .merge(rec)
+    .transition()
+    .duration(1500)
+      .attr("x", d => x(d.state))
+      .attr("y", d => y(d.value))
+      .attr("width", x.bandwidth())
+      .attr("height", d => height - y(d.value))
+      .attr("fill", "lightblue")
+      .on('end',draw_Nov)
+}
+function draw_Nov(){
+  draw_graph2(Nov)
+  var rec = svg.selectAll("rect").data(Nov)
+
+  rec.enter()
+    .append("rect")
+    .merge(rec)
+    .transition()
+    .duration(1500)
+      .attr("x", d => x(d.state))
+      .attr("y", d => y(d.value))
+      .attr("width", x.bandwidth())
+      .attr("height", d => height - y(d.value))
+      .attr("fill", "lightblue")
+      .on('end',draw_Dec)
+}
+function draw_Dec(){
+  draw_graph2(Dec)
+  var rec = svg.selectAll("rect").data(Dec)
+
+  rec.enter()
+    .append("rect")
+    .merge(rec)
+    .transition()
+    .duration(1500)
+      .attr("x", d => x(d.state))
+      .attr("y", d => y(d.value))
+      .attr("width", x.bandwidth())
+      .attr("height", d => height - y(d.value))
+      .attr("fill", "lightblue")
+      .on('end',draw_Jan)
+}
+function draw_Jan(){
+  draw_graph2(Jan)
+  var rec = svg.selectAll("rect").data(Jan)
+
+  rec.enter()
+    .append("rect")
+    .merge(rec)
+    .transition()
+    .duration(1500)
+      .attr("x", d => x(d.state))
+      .attr("y", d => y(d.value))
+      .attr("width", x.bandwidth())
+      .attr("height", d => height - y(d.value))
+      .attr("fill", "lightblue")
+}
+
+function draw(){
+  draw_graph2(Feb)
+  var rec = svg.selectAll("rect").data(Feb)
+
+  rec.enter()
+    .append("rect")
+    .merge(rec)
+    .transition()
+    .duration(1500)
+      .attr("x", d => x(d.state))
+      .attr("y", d => y(d.value))
+      .attr("width", x.bandwidth())
+      .attr("height", d => height - y(d.value))
+      .attr("fill", "lightblue")
+      .on('end',draw_Mar)
+  
+  
+}
+
+draw_graph(Feb)
+
+</script>

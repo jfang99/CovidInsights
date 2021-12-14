@@ -52,7 +52,7 @@ gdata$geo_value <- dict[gdata$geo_value]
 ggplot(gdata)+geom_point(aes(time_value,value_gdata), color="red")+facet_wrap(vars(geo_value)) + xlab("Time") + ylab("releative popularity of symptom-related searches") + labs(title = 'Google Search Trends') + theme(plot.title = element_text(hjust = 0.5))
 ```
 
-This is a visualization of Google search volume for anosmia and ageusia related searches. We can see that search volume exploded in March, obviously this is because the first break of covid-19, and the virus caught people's attention for the first time. After that, anosmia and ageusia related searches became stabilized, however, it showed a increasing trend in December, we speculate that it's because there was a small outbreak of covid at that time. To find out how pandemic influences people and economy, we then explored data of bar visits and restaurant visits.
+This is a visualization of Google search volume for anosmia and ageusia related searches. We can see that search volume exploded in March, obviously this is because the first break of covid-19, and the virus caught people's attention for the first time. After that, anosmia and ageusia related searches became stabilized, however, it showed a increasing trend in December, we speculated that it's because there was a small outbreak of covid at that time. To find out how pandemic influences people and economy, we then explored data of bar visits and restaurant visits.
 
 
 ```{r echo=FALSE, warning=FALSE}
@@ -99,7 +99,7 @@ ggparcoord(d2, columns = 2:13, alphaLines = .5,
 
 ```
 
-As we all know, covid start to outbreak in February 2020. From the graph we can also see that after the outbreak of virus, bar visits and restaurant visits dropped sharply, and because the pandemic continued, these numbers stay low. Correspondingly, we can see that bar visits and restaurant visits are a little bit low in December, which is consistent with what we found before, and this also indicates that people have some attention on the pandemic, and some people indeed reduced the number of visits to the bar.
+As we all know, covid started to outbreak in February 2020. From the graph we can also see that after the outbreak of virus, bar visits and restaurant visits dropped sharply, and because the pandemic continued, these numbers stayed low. Correspondingly, we can see that bar visits and restaurant visits are a little bit low in December, which is consistent with what we found before, and this also indicates that people had some attention on the pandemic, and some people indeed reduced the number of visits to the bar.
 
 
 
@@ -134,7 +134,7 @@ dd$geo_value <- dict[dd$geo_value]
 
 ggplot(dd)+geom_point(aes(value_a,value_bdata), color="red")+facet_wrap(vars(geo_value))+xlab("covid related hospital visits")+ylab("number of visits (per 100,000 population)") +labs(title = 'Bar Visits  VS  Covid Related Hospital Visits') + theme(plot.title = element_text(hjust = 0.5))
 ```
-To find out the influence of pandemic on bar visits, here we combine the data of covid related hospital visits, which indicates the seriousness of pandemic, and bar visits. Form the graph we can see that when covid related hospital visits is close to 0, many people like going to bar for fun, but after the covid pandemic became serious, especially when there are more and more covid cases and covid related hospital visits increased, number of people going to bar decreased. For example, Hiwaii, there are more than 600 people per 100,000 people going to bar in some no covid day, but after the increase of covid related visits, which indicates severer of pandemic, it never happen again that there are so many people going to bar.
+To find out the influence of pandemic on bar visits, here we combine the data of covid related hospital visits, which indicate the seriousness of pandemic, and bar visits. Form the graph we can see that whexn covid related hospital visits was close to 0, many people liked going to bar for fun, but after the covid pandemic became serious, especially when there were more and more covid cases and covid related hospital visits increased, number of people going to bar decreased. For example, Hiwaii, there were more than 600 people per 100,000 people going to bar in some no covid day, but after the increase of covid related visits, which indicates severer of pandemic, it never happened again that there were so many people going to bar.
 
 ```{r echo=FALSE, warning=FALSE}
 ee <- e
@@ -146,7 +146,7 @@ ggplot(ee)+geom_point(aes(value_a,value_rdata), color="red")+facet_wrap(vars(geo
 ```
 
 
-However, in the graph of covid related hospital visits VS resturant visits (per 100,000 population), we find that after pandemic, even if people eat outside have some decreasing, but many people still choose eat outside, especially for Missouri and Kansas, which is  consistent with our findings before.
+However, in the graph of covid related hospital visits VS resturant visits (per 100,000 population), we find that after pandemic, even if people eating outside have some decreasing, but many people still choosed eat outside, especially for Missouri and Kansas, which is  consistent with our findings before.
 
 
 ```{r echo=FALSE, warning=FALSE}
@@ -165,7 +165,7 @@ ggplot(e1)+geom_point(aes(value_a,visit_value, color=location, alpha=0.2))+facet
 
 ```
 
-When put data of bar visits and resturant visits into on graph, we can see that people eating outside significantly higher than people visiting the bar. Especially in Hiwaii, when the pandemic is not so serious, people going to bar is more than people eating outside, but during the serious pandemic, there are more people eating outside than people going to bar surprisingly, so we think that influence of pandemic on bars may be bigger than on resturants.
+When put data of bar visits and resturant visits into on graph, we can see that people eating outside significantly higher than people visiting the bar. Especially in Hiwaii, when the pandemic was not so serious, people going to bar was more than people eating outside, but during the serious pandemic, there were more people eating outside than people going to bar surprisingly, so we think that influence of pandemic on bars may be bigger than on resturants.
 
 ```{r echo=FALSE, warning=FALSE}
 e2 <- e %>% group_by(geo_value) %>% summarise(mean_b = mean(value_bdata), mean_r = mean(value_rdata)) %>% ungroup()
@@ -185,7 +185,7 @@ ggplot(e2, aes(x = times, y = value, group = geo_value, color=geo_value)) +geom_
 ```
 
 
-To observe the influence of covid-19 on resturants and bars more clearly, we draw a slope graph to compare bar and resturant visits when pandemic is serious to  when there pandemic is not serious. Here we define that when percentage of outpatient doctor visits primarily about COVID-related symptoms is less than or equal to 1, we take it as pandemic is not serious, when percentage of outpatient doctor visits primarily about COVID-related symptoms is greater than 1, we take it as pandemic is serious. We can clearly find that even during time when covid-19 become more serious, people eating outside didn't decrease much. When considering proportion, we can see that proportion of deacreasing number of bar visits is higher than that of resturant visits, so we can say that influence of covid-19 on bars is higher than resturants. There are many reasons can lead to this situation, we speculate that maybe it's because bar isn't necessary for many people's life, but restaurants are. In addtion, bars are more crowded, which makes it more dangerous during pandemic.
+To observe the influence of covid-19 on resturants and bars more clearly, we draw a slope graph to compare bar and resturant visits when pandemic was serious to  when there pandemic was not serious. Here we define that when percentage of outpatient doctor visits primarily about COVID-related symptoms is less than or equal to 1, we take it as pandemic is not serious, when percentage of outpatient doctor visits primarily about COVID-related symptoms is greater than 1, we take it as pandemic is serious. We can clearly find that even during time when covid-19 became more serious, people eating outside didn't decrease much. When considering proportion, we can see that proportion of deacreasing number of bar visits is higher than that of resturant visits, so we can say that influence of covid-19 on bars is higher than resturants. There are many reasons can lead to this situation, we speculate that maybe it's because bar isn't necessary for many people's life, but restaurants are. In addtion, bars are more crowded, which makes it more dangerous during pandemic.
 
 
 ## Stressed Exerted on Hospitals by COVID-19

@@ -23,6 +23,7 @@ impact-of-covid-19-on-bars-and-restaurants
 stressed-exerted-on-hospitals-by-covid-19
 impact-of-covid-19-on-mental-health-and-financial-situation
 interactive-component
+covid-related-doctor-visits
 conclusion
 summary
 limitation

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>ourgraph</title>
+    <script src="https://d3js.org/d3.v7.js"></script>
+  </head>
+
+  <body>
+
+<script src="https://d3js.org/d3.v6.min.js"></script>
+
+<button onclick="draw_graph(Feb)">Feb. 2020</button>
+<button onclick="draw_graph(Mar)">Mar. 2020</button>
+<button onclick="draw_graph(Apr)">Apr. 2020</button>
+<button onclick="draw_graph(May)">May. 2020</button>
+<button onclick="draw_graph(Jun)">Jun. 2020</button>
+<button onclick="draw_graph(Jul)">Jul. 2020</button>
+<button onclick="draw_graph(Aug)">Aug. 2020</button>
+<button onclick="draw_graph(Sep)">Sep. 2020</button>
+<button onclick="draw_graph(Oct)">Oct. 2020</button>
+<button onclick="draw_graph(Nov)">Nov. 2020</button>
+<button onclick="draw_graph(Dec)">Dec. 2020</button>
+<button onclick="draw_graph(Jan)">Jan. 2021</button>
+
+<div>
+  <svg></svg>
+</div>
+
+
+<script>
+
+var Feb = [
+   {state: "California", value: 4.911978},
+   {state: "Colorado", value: 4.584743},
+   {state: "Hawaii", value: 0.090302},
+   {state: "Kansas", value: 1.718006},
+   {state: "Missouri", value: 4.45724},
+   {state: "New York", value: 7.087029},
+   {state: "Texas", value: 5.480102},
+   {state: "Virginia", value: 6.881053},
+   {state: "Washington", value: 1.444013}
+   
+];
+
+var Mar = [
+   {state: "California", value: 27.189654},
+   {state: "Colorado", value: 25.471162},
+   {state: "Hawaii", value: 5.636526},
+   {state: "Kansas", value: 11.989646},
+   {state: "Missouri", value: 18.085835},
+   {state: "New York", value: 61.611928},
+   {state: "Texas", value: 25.637178},
+   {state: "Virginia", value: 17.796065},
+   {state: "Washington", value: 17.631186}
+];
+
+var Apr = [
+   {state: "California", value: 87.261573},
+   {state: "Colorado", value: 140.975956},
+   {state: "Hawaii", value: 16.651112},
+   {state: "Kansas", value: 47.864891},
+   {state: "Missouri", value: 69.156867},
+   {state: "New York", value: 340.808396},
+   {state: "Texas", value: 72.296624},
+   {state: "Virginia", value: 98.885782},
+   {state: "Washington", value: 52.769612}
+];
+
+var May = [
+   {state: "California", value: 106.07512},
+   {state: "Colorado", value: 191.179056},
+   {state: "Hawaii", value: 13.203001},
+   {state: "Kansas", value: 41.960726},
+   {state: "Missouri", value: 85.367832},
+   {state: "New York", value: 468.542379},
+   {state: "Texas", value: 87.633483},
+   {state: "Virginia", value: 124.176575},
+   {state: "Washington", value: 43.368969}
+];
+
+var Jun = [
+   {state: "California", value: 125.174576},
+   {state: "Colorado", value: 129.261618},
+   {state: "Hawaii", value: 15.78409},
+   {state: "Kansas", value: 57.807183},
+   {state: "Missouri", value: 151.257491},
+   {state: "New York", value: 188.128923},
+   {state: "Texas", value: 223.446006},
+   {state: "Virginia", value: 124.90202},
+   {state: "Washington", value: 47.595383}
+];
+
+var Jul = [
+   {state: "California", value: 237.110767},
+   {state: "Colorado", value: 203.111977},
+   {state: "Hawaii", value: 32.837678},
+   {state: "Kansas", value: 139.009931},
+   {state: "Missouri", value: 340.681952},
+   {state: "New York", value: 224.235324},
+   {state: "Texas", value: 361.351857},
+   {state: "Virginia", value: 185.226694},
+   {state: "Washington", value: 101.888888}
+];
+
+var Aug = [
+   {state: "California", value: 178.172226},
+   {state: "Colorado", value: 156.491966},
+   {state: "Hawaii", value: 75.695594},
+   {state: "Kansas", value: 104.515447},
+   {state: "Missouri", value: 314.750352},
+   {state: "New York", value: 299.277346},
+   {state: "Texas", value: 188.746528},
+   {state: "Virginia", value: 180.571618},
+   {state: "Washington", value: 98.214082}
+];
+
+var Sep = [
+   {state: "California", value: 149.455903},
+   {state: "Colorado", value: 148.628463},
+   {state: "Hawaii", value: 124.872849},
+   {state: "Kansas", value: 130.58044},
+   {state: "Missouri", value: 308.560611},
+   {state: "New York", value: 299.186025},
+   {state: "Texas", value: 168.02125},
+   {state: "Virginia", value: 155.095897},
+   {state: "Washington", value: 102.382745}
+];
+
+var Oct = [
+   {state: "California", value: 185.847836},
+   {state: "Colorado", value: 226.308697},
+   {state: "Hawaii", value: 127.28611},
+   {state: "Kansas", value: 184.267858},
+   {state: "Missouri", value: 341.462707},
+   {state: "New York", value: 372.813637},
+   {state: "Texas", value: 255.386944},
+   {state: "Virginia", value: 195.527509},
+   {state: "Washington", value: 139.959937}
+];
+
+var Nov = [
+   {state: "California", value: 420.900552},
+   {state: "Colorado", value: 399.906982},
+   {state: "Hawaii", value: 113.903075},
+   {state: "Kansas", value: 348.994683},
+   {state: "Missouri", value: 582.843621},
+   {state: "New York", value: 605.573284},
+   {state: "Texas", value: 437.775021},
+   {state: "Virginia", value: 323.736034},
+   {state: "Washington", value: 282.471332}
+];
+
+var Dec = [
+   {state: "California", value: 650.322127},
+   {state: "Colorado", value: 360.2109},
+   {state: "Hawaii", value: 127.532846},
+   {state: "Kansas", value: 388.977836},
+   {state: "Missouri", value: 586.372943},
+   {state: "New York", value: 740.584503},
+   {state: "Texas", value: 588.7447},
+   {state: "Virginia", value: 489.982801},
+   {state: "Washington", value: 299.601257}
+];
+
+var Jan = [
+   {state: "California", value: 450.33158},
+   {state: "Colorado", value: 131.44109},
+   {state: "Hawaii", value: 108.237603},
+   {state: "Kansas", value: 227.594003},
+   {state: "Missouri", value: 332.830723},
+   {state: "New York", value: 454.840406},
+   {state: "Texas", value: 433.430267},
+   {state: "Virginia", value: 387.225547},
+   {state: "Washington", value: 157.72949}
+];
+
+// margin
+var mar = {left: 75, top: 35, right: 15, bottom: 35};
+var height = 350 - mar.top - mar.bottom;
+var width = 500 - mar.left - mar.right;
+    
+
+var svg = d3.select("svg")
+    .attr("width", width + mar.left + mar.right)
+    .attr("height", height + mar.top + mar.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + mar.left + "," + mar.top + ")");
+
+var x = d3.scaleBand()
+  .domain(Feb.map(function(d) { return d.state; }))
+  .range([ 0, width ])
+  .padding(0.25);
+svg.append("g")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x));
+  
+var y = d3.scaleLinear()
+  .domain([0, 800])
+  .range([ height, 0]);
+svg.append("g")
+  .call(d3.axisLeft(y));
+  
+function draw_graph1(d) {
+
+  var rec = svg.selectAll("rect")
+    .data(d)
+
+  rec.enter()
+    .append("rect")
+    .merge(rec)
+    .transition()
+    .duration(1500)
+      .attr("x", d => x(d.state))
+      .attr("y", d => y(d.value))
+      .attr("width", x.bandwidth())
+      .attr("height", d => height - y(d.value))
+      .attr("fill", "lightblue")
+  
+}
+
+function draw_graph2(d) {
+  var data=0;
+  
+  for (let i = 0; i < d.length; i++) {
+  data += 1/d.length*(d[i].value);
+  }
+  data = [data]
+  
+  svg.selectAll("line")
+   .remove()
+    
+  var line = svg.selectAll("line")
+    .data(data) 
+    
+    
+
+    
+  line.enter()
+    .append("line")
+    .merge(line)
+    .style("stroke", "black")  
+    .transition()
+    .duration(1500)
+    .attr("x1", 0)    
+    .attr("y1", y(data))     
+    //.attr("y1", 50)  
+    .attr("x2", mar.right+width)     
+    .attr("y2", y(data)); 
+
+}
+
+function draw_graph(d) {
+  draw_graph1(d);
+  draw_graph2(d);
+}
+
+draw_graph(Feb)
+
+</script>
+  </body>
+</html>
